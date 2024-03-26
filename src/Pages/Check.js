@@ -18,6 +18,11 @@ const Interview = () => {
  const { transcript, resetTranscript } = useSpeechRecognition();
 
  useEffect(() => {
+    // This effect runs once after the initial render
+    setQuestionIndex(0);
+ }, []); // Empty dependency array ensures this effect runs only once
+
+ useEffect(() => {
     if (questionIndex < questions.length) {
       setIsListening(true);
       SpeechRecognition.startListening({ continuous: false });

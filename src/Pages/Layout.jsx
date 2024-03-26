@@ -6,6 +6,7 @@ import About from "./About";
 import Gemini from "./Gemini";
 import Interview from "./Interview";
 import Check from "./Check";
+import Demo from "./Demo";
 const Layout = () => {
     return (
         <div>
@@ -16,6 +17,7 @@ const Layout = () => {
                     <Route path="/g" element={<Gemini />} />
                     <Route path="/i" element={<Interview />} />
                     <Route path="/c" element={<Check />} />
+                    <Route path="/d" element={<Demo />} />
                 </Routes>
             </Router>
         </div>
