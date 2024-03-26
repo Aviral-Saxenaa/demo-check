@@ -59,7 +59,7 @@ const CameraStream = () => {
           <span style={{ color: 'yellow', fontSize: '20px', fontWeight: 500, }}>AI INTERVIEW </span>
           <div style={{width:'25%',backgroundColor:'grey',height: '1px',alignSelf:'center',margin:'10px'}}></div>
            <div>
-            // ------------ Question Span ------------------
+            {/* // ------------ Question Span ------------------ */}
            <span style={{ color: 'white', fontSize: '30px', fontWeight: 500, textShadow: '1px 1px 1px rgba(14,1,0,1)', }}>Q) What is use of usestate in React? </span>
            </div>
           </div>

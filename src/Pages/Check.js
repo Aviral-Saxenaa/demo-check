@@ -44,8 +44,12 @@ const Interview = () => {
  }, [timer]);
 
  const handleFinish = async () => {
-    // Construct the prompt for the Gemini API with all questions and answers
-    const prompt = answers.map(({ question, answer }) => `Question: ${question}, Answer: ${answer}`).join(', ');
+    // Ensure all answers are stored before making the API call
+    const allAnswers = [...answers, { question: questions[questionIndex - 1], answer: userAnswer }];
+    setAnswers(allAnswers);
+
+    // Construct the prompt for the Gemini API
+    const prompt = allAnswers.map(({ question, answer }) => `Question: ${question}, Answer: ${answer}`).join(', ');
     console.log(`Prompt for Gemini API: ${prompt}`);
 
     const response = await axios({
@@ -54,7 +58,7 @@ const Interview = () => {
       data: {
         contents: [{
           parts: [{
-            text: `Please rate the following interview out of 100 percentage: ${prompt}`
+            text: `Please rate the following interview: ${prompt}`
           }]
         }]
       },
