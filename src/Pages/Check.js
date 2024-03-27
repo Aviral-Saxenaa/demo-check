@@ -14,6 +14,8 @@ const Interview = () => {
  const [answers, setAnswers] = useState([]);
  const [isListening, setIsListening] = useState(false);
  const [timer, setTimer] = useState(10);
+ const [feedback, setFeedback] = useState(''); // State to store feedback
+ const [loading, setLoading] = useState(false); // State to track loading status
 
  const { transcript, resetTranscript } = useSpeechRecognition();
 
@@ -48,7 +50,15 @@ const Interview = () => {
     }
  }, [timer]);
 
+ useEffect(() => {
+    // Automatically call handleFinish when all questions have been answered
+    if (questionIndex === questions.length) {
+      handleFinish();
+    }
+ }, [questionIndex]);
+
  const handleFinish = async () => {
+    setLoading(true); // Start loading
     // Ensure all answers are stored before making the API call
     const allAnswers = [...answers, { question: questions[questionIndex - 1], answer: userAnswer }];
     setAnswers(allAnswers);
@@ -57,18 +67,27 @@ const Interview = () => {
     const prompt = allAnswers.map(({ question, answer }) => `Question: ${question}, Answer: ${answer}`).join(', ');
     console.log(`Prompt for Gemini API: ${prompt}`);
 
-    const response = await axios({
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyC4L594j7cxkZW7nZA3JfVFKvc1eOQ1lvs",
-      method: "post",
-      data: {
-        contents: [{
-          parts: [{
-            text: `Please rate the following interview: ${prompt}`
+    try {
+      const response = await axios({
+        url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyC4L594j7cxkZW7nZA3JfVFKvc1eOQ1lvs",
+        method: "post",
+        data: {
+          contents: [{
+            parts: [{
+              text: `Please rate the following interview: ${prompt}`
+            }]
           }]
-        }]
-      },
-    });
-    console.log(response.data);
+        },
+      });
+      console.log(response.data);
+
+      // Store the feedback from the API response
+      setFeedback(response.data.candidates[0].content.parts[0].text);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
  };
 
  return (
@@ -83,8 +102,10 @@ const Interview = () => {
         <p>Interview completed!</p>
       )}
       <button onClick={() => setQuestionIndex(0)}>Start Interview</button>
-      {questionIndex === questions.length && (
-        <button onClick={handleFinish}>Finish Interview</button>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        feedback && <p>Feedback: {feedback}</p>
       )}
     </div>
  );
